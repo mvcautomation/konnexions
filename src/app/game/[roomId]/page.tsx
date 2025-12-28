@@ -25,6 +25,9 @@ export default function GameRoom() {
     setUsername,
     roomState,
     setRoomState,
+    updatePlayer,
+    updatePlayerStatus,
+    updatePlayerSelection,
     selectedWords,
     puzzleWords,
     solvedCategories,
@@ -69,50 +72,18 @@ export default function GameRoom() {
 
   const handlePlayerJoined = useCallback((player: Player) => {
     logger.info({ playerId: player.id, username: player.username }, 'Player joined');
-    if (roomState) {
-      setRoomState({
-        ...roomState,
-        players: {
-          ...roomState.players,
-          [player.id]: player,
-        },
-      });
-    }
-  }, [roomState, setRoomState]);
+    updatePlayer(player);
+  }, [updatePlayer]);
 
   const handlePlayerLeft = useCallback((playerId: string) => {
     logger.info({ playerId }, 'Player left');
-    if (roomState) {
-      const newPlayers = { ...roomState.players };
-      if (newPlayers[playerId]) {
-        newPlayers[playerId] = {
-          ...newPlayers[playerId],
-          connectionStatus: 'disconnected',
-        };
-      }
-      setRoomState({
-        ...roomState,
-        players: newPlayers,
-      });
-    }
-  }, [roomState, setRoomState]);
+    updatePlayerStatus(playerId, 'disconnected');
+  }, [updatePlayerStatus]);
 
   const handlePlayerSelected = useCallback((playerId: string, words: string[]) => {
     logger.debug({ playerId, wordCount: words.length }, 'Player selection updated');
-    if (roomState) {
-      const newPlayers = { ...roomState.players };
-      if (newPlayers[playerId]) {
-        newPlayers[playerId] = {
-          ...newPlayers[playerId],
-          selectedWords: words,
-        };
-      }
-      setRoomState({
-        ...roomState,
-        players: newPlayers,
-      });
-    }
-  }, [roomState, setRoomState]);
+    updatePlayerSelection(playerId, words);
+  }, [updatePlayerSelection]);
 
   const handleGuessResult = useCallback((
     correct: boolean,

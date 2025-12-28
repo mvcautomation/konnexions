@@ -19,6 +19,9 @@ interface GameStore {
   // Room state (from server)
   roomState: RoomState | null;
   setRoomState: (state: RoomState | null) => void;
+  updatePlayer: (player: Player) => void;
+  updatePlayerStatus: (playerId: string, status: Player['connectionStatus']) => void;
+  updatePlayerSelection: (playerId: string, words: string[]) => void;
 
   // Local UI state
   selectedWords: string[];
@@ -69,6 +72,59 @@ export const useGameStore = create<GameStore>()(
       setRoomState: (state) => {
         logger.debug({ roomId: state?.roomId }, 'Room state updated');
         set({ roomState: state });
+      },
+
+      updatePlayer: (player) => {
+        const { roomState } = get();
+        if (!roomState) {
+          logger.warn({ playerId: player.id }, 'Cannot update player: no room state');
+          return;
+        }
+        logger.debug({ playerId: player.id, username: player.username }, 'Player updated');
+        set({
+          roomState: {
+            ...roomState,
+            players: {
+              ...roomState.players,
+              [player.id]: player,
+            },
+          },
+        });
+      },
+
+      updatePlayerStatus: (playerId, status) => {
+        const { roomState } = get();
+        if (!roomState || !roomState.players[playerId]) return;
+        logger.debug({ playerId, status }, 'Player status updated');
+        set({
+          roomState: {
+            ...roomState,
+            players: {
+              ...roomState.players,
+              [playerId]: {
+                ...roomState.players[playerId],
+                connectionStatus: status,
+              },
+            },
+          },
+        });
+      },
+
+      updatePlayerSelection: (playerId, words) => {
+        const { roomState } = get();
+        if (!roomState || !roomState.players[playerId]) return;
+        set({
+          roomState: {
+            ...roomState,
+            players: {
+              ...roomState.players,
+              [playerId]: {
+                ...roomState.players[playerId],
+                selectedWords: words,
+              },
+            },
+          },
+        });
       },
 
       // Local UI state
