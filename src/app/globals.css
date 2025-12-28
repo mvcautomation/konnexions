@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Konnexions color palette */
+  --background: #1a1a2e;
+  --background-card: #16213e;
+  --foreground: #edf2f4;
+
+  /* Category colors */
+  --color-yellow: #f4d35e;
+  --color-green: #95d5b2;
+  --color-blue: #8ecae6;
+  --color-purple: #c77dff;
+
+  /* UI colors */
+  --color-accent: #ff6b6b;
+  --color-success: #95d5b2;
+  --color-muted: #4a5568;
+
+  /* Player indicator colors */
+  --player-1: #ff6b6b;
+  --player-2: #4ecdc4;
+  --player-3: #ffe66d;
+  --player-4: #a8e6cf;
+  --player-5: #dda0dd;
+  --player-6: #98d8c8;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-card: var(--background-card);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-yellow: var(--color-yellow);
+  --color-green: var(--color-green);
+  --color-blue: var(--color-blue);
+  --color-purple: var(--color-purple);
+  --color-accent: var(--color-accent);
+  --color-success: var(--color-success);
+  --color-muted: var(--color-muted);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+/* Card base styles */
+.word-card {
+  background: var(--background-card);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+}
+
+.word-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.word-card:active {
+  transform: translateY(0);
+}
+
+.word-card.selected {
+  box-shadow: 0 0 0 3px var(--foreground);
+}
+
+/* Solved category banners */
+.category-banner {
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.category-banner.yellow { background: var(--color-yellow); color: #1a1a2e; }
+.category-banner.green { background: var(--color-green); color: #1a1a2e; }
+.category-banner.blue { background: var(--color-blue); color: #1a1a2e; }
+.category-banner.purple { background: var(--color-purple); color: #1a1a2e; }
+
+/* Shake animation for wrong answers */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Player selection indicators */
+.player-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 }
